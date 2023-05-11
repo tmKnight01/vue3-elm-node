@@ -1,7 +1,6 @@
-const  Cities  =  require('../../models/v1/cities');
-const  AddressComponent =  require("../../prototype/addressComponent");
-const pinyin = require('pinyin'); 
-
+const Cities = require("../../models/v1/cities");
+const AddressComponent = require("../../prototype/addressComponent");
+const pinyin = require("pinyin");
 
 class CityHandle extends AddressComponent {
   constructor() {
@@ -16,12 +15,14 @@ class CityHandle extends AddressComponent {
     try {
       switch (type) {
         case "guess":
-            console.log('type',type);
           const city = await this.getCityName(req);
-          console.log('city',city);
           cityInfo = await Cities.cityGuess(city);
-          console.log('break');
+
           break;
+        case "hot":
+          cityInfo= await Cities.hotCities();
+          break;
+
         default:
           res.json({
             name: "ERROR_QUERY_TYPE",
@@ -40,20 +41,18 @@ class CityHandle extends AddressComponent {
 
   async getCityName(req) {
     try {
-        const cityInfo = await this.guessPosition(req);
-        console.log('cityInfo',cityInfo);
-        const pinyinArr =  pinyin(cityInfo.city, {
-            style:pinyin.STYLE_NORMAL
-          });
-          console.log('pinyinArr',pinyinArr);
-          let cityName = '';
-          pinyinArr.forEach(item => {
-              cityName += item[0];
-          })
-          return cityName;
+      const cityInfo = await this.guessPosition(req);
+      const pinyinArr = pinyin(cityInfo.city, {
+        style: pinyin.STYLE_NORMAL,
+      });
+      let cityName = "";
+      pinyinArr.forEach((item) => {
+        cityName += item[0];
+      });
+      return cityName;
     } catch {
       return "北京";
-    }   
+    }
   }
 }
 

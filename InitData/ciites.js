@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     S: [
     {
     id: 1,
