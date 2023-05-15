@@ -17,7 +17,8 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.1",
     "npm": "^9.6.6",
-    "pinyin": "^2.8.3"
+    "pinyin": "^2.8.3",
+    "captchapng": "0.0.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"
