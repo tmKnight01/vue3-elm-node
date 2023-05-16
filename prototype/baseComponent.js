@@ -1,7 +1,23 @@
-let fetch =  require('node-fetch')
+let fetch = require("node-fetch");
+const Ids = require("../models/ids");
 
 module.exports = class BaseComponent {
-  constructor() {}
+  constructor() {
+    this.idList = [
+      "restaurant_id",
+      "food_id",
+      "order_id",
+      "user_id",
+      "address_id",
+      "cart_id",
+      "img_id",
+      "category_id",
+      "item_id",
+      "sku_id",
+      "admin_id",
+      "statis_id",
+    ];
+  }
 
   async fetch(url = "", data = {}, type = "GET", resType = "JSON") {
     type = type.toUpperCase();
@@ -44,5 +60,23 @@ module.exports = class BaseComponent {
       throw new Error(err);
     }
     return responseJson;
+  }
+
+  // 返回 type类型的id
+  async getId(type) {
+    // 遍历这个idList 查找是否存在
+    if (!this.idList.includes(type)) {
+      throw new Error("类型不存在！");
+    }
+    try {
+      const IdData = await Ids.findOne();
+      IdData[type]++;
+      console.log(type,IdData[type]);
+      await IdData.save();
+      return IdData[type];
+    } catch (err) {
+      console.log("err", err);
+      throw new Error(err);
+    }
   }
 };

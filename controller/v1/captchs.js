@@ -13,9 +13,6 @@ class Chatchapng {
 
     const base64 = p.getBase64();
 
-    // res.writeHead(200,{
-    //   "Content-Type": "text/plain",
-    // });
 
     res.send({
       status: 1,
