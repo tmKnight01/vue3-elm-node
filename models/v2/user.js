@@ -11,6 +11,6 @@ const mongoose = require('mongoose');
     password: String
  })
 
- const user = mongoose.model('user',UserScheme);
+ const user = mongoose.model('users',UserScheme);
 
  module.exports = user;

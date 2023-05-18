@@ -26,6 +26,8 @@ class User extends AddressComponent {
         const user = await UserModal.findOne({ username });
         const user_id = await this.getId("user_id");
       
+        console.log('user',user);
+
         if (!user) {
           const cityInfo = await this.guessPosition(req); // 存入周边城市信息
           const newUser = { user_id, is: user_id, username, password };
@@ -52,11 +54,14 @@ class User extends AddressComponent {
             message: "密码错误",
           });
         } else {
-          req.session.user_id = user_id;
-          const userinfo = UserInfoModal.findOne({ user_id: user.user_id });
-          console.log('user_id',user_id);
-          console.log('user_info',userinfo);
-          res.send({ userinfo });
+          req.session.user_id = user.user_id;
+          const userinfo = await UserInfoModal.findOne({
+            user_id: user.user_id,
+          });
+          res.send({
+            userinfo,
+            code:0
+          });
         }
       });
     } catch (err) {

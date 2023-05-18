@@ -15,7 +15,7 @@ class Chatchapng {
 
 
     res.send({
-      status: 1,
+      status:1,
       code: "data:image/png;base64," + base64,
       cap,
     });
