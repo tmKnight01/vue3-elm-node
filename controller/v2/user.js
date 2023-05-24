@@ -14,13 +14,14 @@ class User extends AddressComponent {
 
   async login(req, res, next) {
     try {
-      console.log("req", req.body);
       const form = new formidable.IncomingForm();
+      console.log('1111');
       form.parse(req, async (err, fields, files) => {
         const { username, password, cap } = fields;
-
+        console.log('test',cap);
         if (err) {
           console.log("err", err);
+          next(err);
           res.status(err.httpCode || 400).send(err);
           return;
         }
@@ -75,7 +76,7 @@ class User extends AddressComponent {
     const user_id = req.query.user_id;
     if (!user_id || !Number(user_id)) {
       res.send({
-        stauts: -1,
+        status: 1,
         message: "参数错误，未获取到用户Id",
       });
     }
@@ -86,7 +87,7 @@ class User extends AddressComponent {
     } catch (err) {
       res.send({
         message:"通过ID获取用户信息失败",
-        status:-1
+        status:1
       })
     }
   }
