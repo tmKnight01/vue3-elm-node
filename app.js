@@ -33,7 +33,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
-// app.use(express.json());   // 该中间件与formidable解析表单有冲突 在express 4.x以上的版本中 请废弃该中间件
+// app.use(express.json());   // 该中间件与formidable解析表单有冲突 在express 4.x以上的版本中 需要废弃该中间件
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(

@@ -49,10 +49,32 @@ class CityHandle extends AddressComponent {
       pinyinArr.forEach((item) => {
         cityName += item[0];
       });
-      return cityName;
+      return cityName; 
     } catch {
       return "北京";
     }
+  }
+
+  async getCityById(req,res){
+     const city_id = req.query.city_id;
+      console.log('req.params',req.query);
+      if(!city_id){
+        res.send({
+          message: '参数错误',
+          name:"PARAMS_ERROR"
+        })
+        return;
+      }
+
+     const cityInfo = await Cities.findCityById(city_id);
+    if(!cityInfo){
+      res.send({
+        message:'未找到城市信息',
+        name:"NO_CITY_ERROR"
+      })
+      return;
+    }
+    res.send(cityInfo);
   }
 }
 

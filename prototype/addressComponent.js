@@ -1,5 +1,6 @@
+const { log } = require("console");
 const  BaseComponent =  require("./baseComponent");
-
+const os = require('os');
 
 
 
@@ -19,21 +20,23 @@ class AddressComponent  extends BaseComponent{
 	async guessPosition(req){
 		return new Promise(async (resolve, reject) => {
 			let ip;
-			const defaultIp = '180.158.102.141';
+			const defaultIp = '219.133.168.5';
 	 		if (process.env.NODE_ENV == 'development') {
 	 			ip = defaultIp;
 	 		} else {
-	 			try {
+				try {
 					ip = req.headers['x-forwarded-for'] || 
-			 		req.connection.remoteAddress || 
-			 		req.socket.remoteAddress ||
-			 		req.connection.socket.remoteAddress;
-			 		const ipArr = ip.split(':');
-			 		ip = ipArr[ipArr.length -1] || defaultIp;
+					 req.connection.remoteAddress || 
+					 req.socket.remoteAddress ||
+					 req.connection.socket.remoteAddress;
+					 const ipArr = ip.split(':');
+					 ip = ipArr[ipArr.length -1] ;
 				} catch (e) {
 					ip = defaultIp;
 				}
 	 		}
+		
+		    console.log('ip',ip);
 	 		try{
 		 		let result = await this.fetch('http://apis.map.qq.com/ws/location/v1/ip', {
 		 			ip,
@@ -64,6 +67,7 @@ class AddressComponent  extends BaseComponent{
 		 				city: result.result.ad_info.city,
 		 			}
 		 			cityInfo.city = cityInfo.city.replace(/市$/, '');
+					console.log('cityInfo',result);
 		 			resolve(cityInfo)
 		 		}else{
 		 			console.log('定位失败', result)
@@ -75,6 +79,19 @@ class AddressComponent  extends BaseComponent{
 		})
 	}
 
+
+	// 获取当前服务器的ip地址
+	async getLocalIP(){
+      const interfaces = os.networkInterfaces();
+	  for (const iface of Object.values(interfaces)) {
+		for (const addr of iface) {
+		  if (addr.family === 'IPv4' && !addr.internal) {
+			return addr.address;
+		  }
+		}
+	  }
+
+	}
 }
 
 

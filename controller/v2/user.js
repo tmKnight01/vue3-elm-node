@@ -5,7 +5,6 @@ const UserInfoModal = require("../../models/v2/userInfo");
 const formidable = require("formidable");
 const dayjs = require("dayjs");
 
-
 class User extends AddressComponent {
   constructor() {
     super();
@@ -15,10 +14,10 @@ class User extends AddressComponent {
   async login(req, res, next) {
     try {
       const form = new formidable.IncomingForm();
-      console.log('1111');
+      console.log("1111");
       form.parse(req, async (err, fields, files) => {
         const { username, password, cap } = fields;
-        console.log('test',cap);
+        console.log("test", cap);
         if (err) {
           console.log("err", err);
           next(err);
@@ -82,13 +81,14 @@ class User extends AddressComponent {
     }
     try {
       const userInfo = await UserInfoModal.findOne({ user_id });
-      console.log('userInfo',userInfo);
-      res.send(userInfo);
+      if (userInfo) {
+        res.send(userInfo);
+      }
     } catch (err) {
       res.send({
-        message:"通过ID获取用户信息失败",
-        status:1
-      })
+        message: "通过ID获取用户信息失败",
+        status: 1,
+      });
     }
   }
 }

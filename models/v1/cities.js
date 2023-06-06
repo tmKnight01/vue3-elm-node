@@ -31,21 +31,44 @@ citySchema.statics = {
       }
     });
   },
-  hotCities: function ()  {
+  hotCities: function () {
     return new Promise(async (resolve, reject) => {
       try {
-	
         const result = await Cities.findOne();
-		// console.log('result',result);
         resolve(result.data.hotCities);
       } catch (err) {
-		console.log("err:", err);
+        console.log("err:", err);
         reject({
           name: "ERROR_DATA",
           message: "查找数据失败",
         });
-       
       }
+    });
+  },
+
+  findCityById: async function (id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const citys = await this.findOne();
+        // const filetCity = Object.keys(citys).forEach(item => item != 'hotCities').reduce((newO)=>{},{})
+        for ([key, value] of Object.entries(citys.data)) {
+          if (key != "hotCities") {
+            for (let i = 0; i < value.length; i++) {
+              if (value[i].id == id) {
+                resolve(value[i]);
+              }
+            }
+          }
+        }
+      } catch (err){
+        console.log('err',err);
+        reject({
+          name: "ERROR_DATA",
+          message: "查找数据失败",
+        });
+      }
+    }).catch((err) => {
+      console.log("err", err);
     });
   },
 };
@@ -53,6 +76,7 @@ citySchema.statics = {
 // 将 城市信息插入到数据库中
 const Cities = mongoose.model("cities", citySchema);
 Cities.findOne((err, data) => {
+  // console.log('data',data);
   if (!data) {
     Cities.create(cityData);
   }

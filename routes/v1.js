@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/cities',CityHandle.getCity);
 router.get('/captchs',Chatchapng.getChatchapng)
+router.get('/city',CityHandle.getCityById);
 
 
 module.exports=  router;
