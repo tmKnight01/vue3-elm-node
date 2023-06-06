@@ -1,7 +1,9 @@
 {
-  "name": "express-test",
+  "name": "express-node",
   "version": "0.0.0",
   "private": true,
+  "author": "tmKnight",
+  "homepage": "https://github.com/tmKnight01/vue3-elm-node",
   "scripts": {
     "start": "cross-env  NODE_ENV=development ./bin/www",
     "start:debug": "node --inspect-brk  ./bin/www"

@@ -49,11 +49,7 @@ app.use(
     },
   })
 );
-// app.use(cors({
-//   origin: 'http://localhost:5173',
 
-//   credentials: true
-// }));
 
 app.use(express.static(path.join(__dirname, "public")));
 router(app);
@@ -72,5 +68,11 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+process.on('uncaughtException', function (err) {
+  console.log('Caught Exception:' + err);//直接捕获method中未被定义的错误，使node服务不会挂掉
+});
+
+
 
 module.exports = app;

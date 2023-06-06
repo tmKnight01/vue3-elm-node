@@ -55,6 +55,7 @@ class CityHandle extends AddressComponent {
     }
   }
 
+  /*根据id获取*/
   async getCityById(req,res){
      const city_id = req.query.city_id;
       console.log('req.params',req.query);
@@ -66,7 +67,7 @@ class CityHandle extends AddressComponent {
         return;
       }
 
-     const cityInfo = await Cities.findCityById(city_id);
+    const cityInfo = await Cities.findCityById(city_id);
     if(!cityInfo){
       res.send({
         message:'未找到城市信息',
