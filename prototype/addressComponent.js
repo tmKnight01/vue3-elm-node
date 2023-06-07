@@ -1,11 +1,11 @@
-
+const { log } = require("console");
 const BaseComponent = require("./baseComponent");
 const os = require("os");
 
 class AddressComponent extends BaseComponent {
   constructor() {
     super();
-    this.tencentkey = "RLHBZ-WMPRP-Q3JDS-V2IQA-JNRFH-EJBHL";
+    this.tencentkey = "TO7BZ-UIZ3Q-GNC55-B6XNV-Y77NO-4TB64";
     this.tencentkey2 = "RRXBZ-WC6KF-ZQSJT-N2QU7-T5QIT-6KF5X";
     this.tencentkey3 = "OHTBZ-7IFRG-JG2QF-IHFUK-XTTK6-VXFBN";
     this.tencentkey4 = "Z2BBZ-QBSKJ-DFUFG-FDGT3-4JRYV-JKF5O";
@@ -101,22 +101,38 @@ class AddressComponent extends BaseComponent {
   }
 
   // 获取就近的相关地址位置
-  async getSearchAddress(kewword, cityName) {
+  async getSearchAddress(keyword, cityName) {
+    console.log("keyword", keyword);
     try {
-      const result = await this.fetch({
-        key: this.tencentkey,
-        kewword: encodeURIComponent(kewword),
-        boundry: `region(${encodeURIComponent(cityName)},0)`,
-        size: 10,
-      });
+      const result = await this.fetch(
+        "http://apis.map.qq.com/ws/place/v1/search",
+        {
+          key: this.tencentkey,
+          keyword: encodeURIComponent(keyword),
+          boundary: `region(${encodeURIComponent(cityName)},0)`,
+          size: 10,
+        }
+      );
+      // console.log("result", result);
       if (result.status == 0) {
-        return resObj;
+        return result;
       } else {
         throw Error("搜索位置失败");
       }
     } catch (err) {
       console.log("err", err);
     }
+  }
+
+  // 将市之前的内容省略
+  removeBoforeCity(address) {
+    console.log('address',address);
+    const index = address.indexOf("市");
+    if (index > 0) {
+      console.log('str',address.slice(index + 1));
+      return address.slice(index + 1);
+    }
+    return address;
   }
 }
 

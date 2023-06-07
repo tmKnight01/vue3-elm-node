@@ -1,6 +1,6 @@
 "use strict";
-const  AddressComponent = require("../../prototype/addressComponent");
-const CityHandle = require('./cites');
+const AddressComponent = require("../../prototype/addressComponent");
+const CityHandle = require("./cites");
 class SearchPlace extends AddressComponent {
   constructor() {
     super();
@@ -8,7 +8,7 @@ class SearchPlace extends AddressComponent {
   }
 
   async search(req, res, next) {
-    const { city_id, keyword } = req.query;
+    const { city_id, keyword, page = 1, limit = 5 } = req.query;
 
     if (!keyword) {
       res.send({
@@ -24,12 +24,42 @@ class SearchPlace extends AddressComponent {
         name: "CITY_ID_ERROR",
       });
     }
-    const cityname = await CityHandle.getCityName(req);
-    console.log('cityname',cityname);
-    const resultObj = await this.getSearchAddress(keyword,cityname);
-    console.log('resultObj',resultObj)
+
+     try{
+      const cityname = await CityHandle.getCityName(req);
+      console.log("cityname", cityname);
+      const resultObj = await this.getSearchAddress(keyword, cityname);
+      let cityList = [];
+      const size = resultObj.data.length;
+      if (size && size > (page - 1) * limit) {
+        // 此处是为了进行分页的效果
+        resultObj.data
+          .slice((page - 1) * limit, limit * page - 1)
+          .forEach((item) => {
+            cityList.push({
+              id: item.id,
+              address: this.removeBoforeCity(item.address),
+              lat: item.location.lat,
+              lng: item.location.lng,
+            });
+          });
+        res.send({ message: "success", cityList, total: size });
+      } else {
+        res.send({
+          message: "未获取地址信息",
+          name: "NO_GET_ADDRESS",
+        });
+      }
+  
+     } catch(err){
+       console.log('err',err);
+       res.send({
+        err,
+        name: "ERROR",
+      });
+     }
+  
   }
 }
-
 
 module.exports = new SearchPlace();
