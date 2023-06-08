@@ -1,6 +1,4 @@
-const { log } = require("console");
 const BaseComponent = require("./baseComponent");
-const os = require("os");
 
 class AddressComponent extends BaseComponent {
   constructor() {
@@ -38,7 +36,6 @@ class AddressComponent extends BaseComponent {
         let result = await this.fetch(
           "http://apis.map.qq.com/ws/location/v1/ip",
           {
-            ip,
             key: this.tencentkey,
           }
         );
@@ -75,6 +72,7 @@ class AddressComponent extends BaseComponent {
             lng: result.result.location.lng,
             city: result.result.ad_info.city,
           };
+          global.myLocation = result.result.location;
           cityInfo.city = cityInfo.city.replace(/市$/, "");
           console.log("cityInfo", result);
           resolve(cityInfo);
@@ -101,19 +99,37 @@ class AddressComponent extends BaseComponent {
   }
 
   // 获取就近的相关地址位置
-  async getSearchAddress(keyword, cityName) {
-    console.log("keyword", keyword);
+  async getSearchAddress(keyword, cityName, size, page_index) {
+    // 首先判断一下 global的上的myLocation是否存在，如何存在那么直接获取Mylocation上的经纬度,
+    // 如何没有的话那么直接调用api来获取当前经纬度.
+
     try {
+      let myLocation;
+      if (global.myLocation) {
+        myLocation = global.myLocation;
+      } else {
+        const cityLocation = await this.fetch(
+          "https://apis.map.qq.com/ws/location/v1/ip",
+          {
+            key: this.tencentkey,
+          }
+        );
+        if (cityLocation) myLocation = cityLocation.result.location;
+        else throw Error("获取经纬度位置失败");
+      }
+
       const result = await this.fetch(
         "http://apis.map.qq.com/ws/place/v1/search",
         {
           key: this.tencentkey,
           keyword: encodeURIComponent(keyword),
-          boundary: `region(${encodeURIComponent(cityName)},0)`,
-          size: 10,
+          boundary: `nearby(${myLocation.lat},${myLocation.lng},1000,1)`,
+          page_index,
+          size,
+          orderby: "_distance",
         }
       );
-      // console.log("result", result);
+      console.log("result", result);
       if (result.status == 0) {
         return result;
       } else {
@@ -126,10 +142,10 @@ class AddressComponent extends BaseComponent {
 
   // 将市之前的内容省略
   removeBoforeCity(address) {
-    console.log('address',address);
+    console.log("address", address);
     const index = address.indexOf("市");
     if (index > 0) {
-      console.log('str',address.slice(index + 1));
+      console.log("str", address.slice(index + 1));
       return address.slice(index + 1);
     }
     return address;

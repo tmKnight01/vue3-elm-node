@@ -5,7 +5,7 @@
   "author": "tmKnight",
   "homepage": "https://github.com/tmKnight01/vue3-elm-node",
   "scripts": {
-    "start": "cross-env  NODE_ENV=development ./bin/www",
+    "start": "nodemon cross-env  NODE_ENV=development ./bin/www",
     "start:debug": "node --inspect-brk  ./bin/www"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "mongoose": "6.10.4",
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.22",
     "npm": "^9.6.6",
     "pinyin": "^2.8.3"
   },

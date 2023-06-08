@@ -14,10 +14,8 @@ class User extends AddressComponent {
   async login(req, res, next) {
     try {
       const form = new formidable.IncomingForm();
-      console.log("1111");
       form.parse(req, async (err, fields, files) => {
         const { username, password, cap } = fields;
-        console.log("test", cap);
         if (err) {
           console.log("err", err);
           next(err);
@@ -31,13 +29,14 @@ class User extends AddressComponent {
 
         if (!user) {
           const cityInfo = await this.guessPosition(req); // 存入周边城市信息
-          const newUser = { user_id, is: user_id, username, password };
+          const newUser = { user_id, id: user_id, username, password };
           const registe_time = dayjs().format("YYYY-MM-DD HH:mm:ss");
           const newUserInfo = {
             username,
             user_id,
             id: user_id,
             city: cityInfo.city,
+            location: cityInfo.location,
             registe_time,
           };
           await UserModal.create(newUser);
