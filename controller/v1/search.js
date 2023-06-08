@@ -8,8 +8,8 @@ class SearchPlace extends AddressComponent {
   }
 
   async search(req, res, next) {
-    const { city_id, keyword, page = 1, limit = 5 } = req.query;
-
+    const { city_id, keyword, page, limit } = req.query;
+    console.log("limit", limit, "page", page);
     if (!keyword) {
       res.send({
         message: "参数错误",
@@ -25,40 +25,45 @@ class SearchPlace extends AddressComponent {
       });
     }
 
-     try{
+    try {
       const cityname = await CityHandle.getCityName(req);
       console.log("cityname", cityname);
-      const resultObj = await this.getSearchAddress(keyword, cityname);
+      const resultObj = await this.getSearchAddress(
+        keyword,
+        cityname,
+        limit,
+        page
+      );
       let cityList = [];
+      console.log("resultObj", resultObj);
       const size = resultObj.data.length;
-      if (size && size > (page - 1) * limit) {
+      if (size) {
         // 此处是为了进行分页的效果
-        resultObj.data
-          .slice((page - 1) * limit, limit * page - 1)
-          .forEach((item) => {
-            cityList.push({
-              id: item.id,
-              address: this.removeBoforeCity(item.address),
-              lat: item.location.lat,
-              lng: item.location.lng,
-            });
+
+        resultObj.data.forEach((item) => {
+          cityList.push({
+            id: item.id,
+            address: `${item.title}`,
+            lat: item.location.lat,
+            lng: item.location.lng,
           });
-        res.send({ message: "success", cityList, total: size });
+        });
+        setTimeout(() => {
+          res.send({ message: "success", cityList, total: resultObj.count });
+        }, 2000);
       } else {
         res.send({
           message: "未获取地址信息",
           name: "NO_GET_ADDRESS",
         });
       }
-  
-     } catch(err){
-       console.log('err',err);
-       res.send({
+    } catch (err) {
+      console.log("err", err);
+      res.send({
         err,
         name: "ERROR",
       });
-     }
-  
+    }
   }
 }
 
